@@ -1,0 +1,32 @@
+{
+  "name": "webrtc",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^5.0.1",
+    "shortid": "^2.2.16",
+    "simple-peer": "^9.11.1",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.8.1"
+  },
+  "alias": [
+    "video-chat.now.sh"
+  ],
+  "scripts": {
+    "start": "react-scripts start",
+    "start:local": "node server/server.js & set NODE_ENV=local &&  react-scripts start",
+    "build": "set NODE_ENV=local && react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
