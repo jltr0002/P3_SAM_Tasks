@@ -1,7 +1,18 @@
 const express = require('express');
+const cors = require('cors');
 var app = express();
+
+app.use(cors());
+
 var server = require('http').Server(app);
-var io = require('socket.io')(server);
+
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST'],
+    credentials: false
+  }
+});
 
 const PORT = 8080;
 
