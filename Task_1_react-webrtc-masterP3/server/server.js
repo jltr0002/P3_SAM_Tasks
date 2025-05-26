@@ -17,25 +17,25 @@ const io = require('socket.io')(server, {
 const PORT = 8080;
 
 server.listen(PORT, () => {
-  console.log('[SERVER]: Server listening on port: ', PORT);
+  console.log(`[SERVER]: Server listening on port: ${PORT}`);
 });
 
 io.on('connection', function (socket) {
-  console.log('[SERVER]: New connection with socket id: ', socket.id);
+  console.log(`[SERVER]: New connection with socket id: "${socket.id}"`);
 
   socket.on('join', function (data) {
     if (!data.roomId) {
-      console.warn('[SERVER]: Missing roomId for socket: ', socket.id);
+      console.warn(`[SERVER]: Missing roomId for socket id: "${socket.id}"`);
       return socket.emit('error', 'Missing roomId');
     }
     
     const room = io.sockets.adapter.rooms.get(data.roomId);
     const numClients = room ? room.size : 0;
-    console.log(`[SERVER]: Socket ${socket.id} joining room, ${data.roomId} (current clients: ${numClients})`);
+    console.log(`[SERVER]: Socket id: "${socket.id}" joining room with id: "${data.roomId}" (current clients: ${numClients})`);
 
 
     if (numClients >= 2) {
-      console.log(`[SERVER]: Room ${data.roomId} is full`);
+      console.log(`[SERVER]: Room with id: "${data.roomId}" is full`);
       socket.emit('full');
       return;
     }
@@ -44,10 +44,10 @@ io.on('connection', function (socket) {
     socket.room = data.roomId;
 
     if (numClients === 0) {
-      console.log(`[SERVER]: Room ${data.roomId} created, with socket ${socket.id}`);
+      console.log(`[SERVER]: Room with id "${data.roomId}" created, with socket id: "${socket.id}"`);
       socket.emit('init');
     } else if (numClients === 1) {
-      console.log(`[SERVER]: Room ${data.roomId} ready. Two participants in`);
+      console.log(`[SERVER]: Room with id "${data.roomId}" ready. One participant in`);
       io.to(data.roomId).emit('ready');
     }
   });
@@ -60,9 +60,9 @@ io.on('connection', function (socket) {
   });
 
   socket.on('disconnect', () => {
-    console.log(`[SERVER]: Socket ${socket.id} disconnected`);
+    console.log(`[SERVER]: Socket with id: "${socket.id}" disconnected`);
     if (socket.room) {
-      console.log(`[SERVER]: Notifying room ${socket.room} of disconnection`);
+      console.log(`[SERVER]: Notifying room "${socket.room}" of disconnection`);
       io.to(socket.room).emit('disconnected');
     }
   });
