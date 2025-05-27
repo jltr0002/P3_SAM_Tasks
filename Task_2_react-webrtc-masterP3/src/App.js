@@ -9,8 +9,8 @@ class App extends Component {
     return (
       <BrowserRouter>
        <React.Fragment>
-          <Route path="/" exact component={goToRoomInput}/>
-          <Route path="/:roomId" exact component={Video}/>
+          <Route path="/videoconf/" exact component={goToRoomInput}/>
+          <Route path="/videoconf/:roomId" exact component={Video}/>
         </React.Fragment>
       </BrowserRouter>
     )

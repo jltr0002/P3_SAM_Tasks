@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import shortId from 'shortid'
 
 const goToRoom = (history, roomId) => {
-  history.push(`/${roomId}`)
+  history.push(`/videoconf/${roomId}`)
 }
 
 
