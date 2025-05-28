@@ -2,7 +2,7 @@
   "name": "webrtc",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost/videoconf3",
+  "homepage": "https://10.82.49.224/videoconf3",
   "dependencies": {
     "express": "^4.19.2",
     "react": "^16.14.0",

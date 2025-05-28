@@ -94,7 +94,10 @@ class Video extends React.Component {
       this.state.localStream,
       this.state.initiator
     );
-    //this.setState({ peer });
+    // 1 · ¿El canal ya está abierto?
+    if (this.peer.connected) {
+      this.setState({ chatReady: true });
+    }
 
     this.peer.on('signal', data => {
       const signal = {
@@ -106,6 +109,7 @@ class Video extends React.Component {
     this.peer.on('stream', stream => {
       this.remoteVideo.srcObject = stream;
       this.setState({ connecting: false, waiting: false });
+      if (this.peer.connected) this.setState({ chatReady: true });
     });
     this.peer.on('data', data => {
       this.setState(prev => ({

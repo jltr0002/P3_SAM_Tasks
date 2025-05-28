@@ -6,8 +6,8 @@ var app = express();
 app.use(cors());
 
 var server = require('https').createServer({
-  key: fs.readFileSync('./prueba.key'),
-  cert: fs.readFileSync('./prueba.crt'),
+  key: fs.readFileSync('./server.key'),
+  cert: fs.readFileSync('./server.crt'),
   requestCert: false,
   rejectUnauthorized: false
 }, app);
