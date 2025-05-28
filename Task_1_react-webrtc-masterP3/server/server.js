@@ -17,7 +17,7 @@ const io = require('socket.io')(server, {
 const PORT = 8080;
 
 server.listen(PORT, () => {
-  console.log(`[SERVER]: Server listening on port: ${PORT}`);
+  console.log(`[SERVER]: Server started and listening on port: ${PORT}`);
 });
 
 io.on('connection', function (socket) {
