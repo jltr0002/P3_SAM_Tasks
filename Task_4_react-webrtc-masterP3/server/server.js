@@ -7,7 +7,11 @@ var io = require('socket.io')(server);
 
 
 
-server.listen(8080);
+const PORT = 8080;
+
+server.listen(PORT, () => {
+  console.log(`[SERVER]: Server listening on port: ${PORT}`);
+});
 
 //Now we use ngrok
 
@@ -22,7 +26,7 @@ io.on('connection', function (socket) {
     
     const room = io.sockets.adapter.rooms.get(data.roomId);
     const numClients = room ? room.size : 0;
-    console.log(`[SERVER]: Socket id: "${socket.id}" joining room with id: "${data.roomId}" (current clients: ${numClients})`);
+    //console.log(`[SERVER]: Socket id: "${socket.id}" joining room with id: "${data.roomId}" (current clients: ${numClients})`);
 
 
     if (numClients >= 2) {
@@ -35,17 +39,17 @@ io.on('connection', function (socket) {
     socket.room = data.roomId;
 
     if (numClients === 0) {
-      console.log(`[SERVER]: Room with id "${data.roomId}" created, with socket id: "${socket.id}"`);
+      console.log(`[SERVER]: Room with id "${data.roomId}" created by socket id: "${socket.id}"`);
       socket.emit('init');
     } else if (numClients === 1) {
-      console.log(`[SERVER]: Room with id "${data.roomId}" ready. One participant in`);
+      console.log(`[SERVER]: Room with id "${data.roomId}" ready. Two participants in`);
       io.to(data.roomId).emit('ready');
     }
   });
 
   socket.on('signal', (data) => {
     if (socket.room && (data && data.desc)) {
-      console.log(`[SERVER]: Relaying signal in room ${socket.room}, with socket id: ${socket.id}`);
+      console.log(`[SERVER]: Relaying signal in room "${socket.room}" to socket id: "${socket.id}"`);
       io.to(socket.room).emit('desc', data.desc);
     }
   });
