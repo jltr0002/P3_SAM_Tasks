@@ -1,6 +1,7 @@
 import React from 'react';
 import VideoCall from '../helpers/simple-peer';
 import '../styles/video.css';
+import '../styles/chat.css';
 import io from 'socket.io-client';
 import { getDisplayStream } from '../helpers/media-access';
 import ShareScreenIcon from './ShareScreenIcon';
@@ -15,10 +16,15 @@ class Video extends React.Component {
       peer: {},
       full: false,
       connecting: false,
-      waiting: true
+      waiting: true,
+      chatReady: false,           // enable send-button only when DC is up
+      messageInput: '',           // current text box value
+      messages: []                // chat history
     };
   }
+
   videoCall = new VideoCall();
+
   componentDidMount() {
     const socket = io(process.env.REACT_APP_SIGNALING_SERVER);
     const component = this;
@@ -45,6 +51,7 @@ class Video extends React.Component {
       component.setState({ full: true });
     });
   }
+
   getUserMedia(cb) {
     return new Promise((resolve, reject) => {
       navigator.getUserMedia = navigator.getUserMedia =
@@ -69,6 +76,7 @@ class Video extends React.Component {
       );
     });
   }
+
   getDisplay() {
     getDisplayStream().then(stream => {
       stream.oninactive = () => {
@@ -82,6 +90,7 @@ class Video extends React.Component {
       this.state.peer.addStream(stream);
     });
   }
+
   enter = roomId => {
     this.setState({ connecting: true });
     const peer = this.videoCall.init(
@@ -89,6 +98,13 @@ class Video extends React.Component {
       this.state.initiator
     );
     this.setState({ peer });
+
+    peer.on('connect', () => this.setState({ chatReady: true }));
+    peer.on('data', data => {
+      this.setState(prev => ({
+        messages: [...prev.messages, { from: 'peer', text: data.toString() }]
+      }));
+    });
 
     peer.on('signal', data => {
       const signal = {
@@ -105,14 +121,28 @@ class Video extends React.Component {
       console.log(err);
     });
   };
+
   call = otherId => {
     this.videoCall.connect(otherId);
   };
+
+  sendMessage = () => {
+    const { messageInput, peer } = this.state;
+    if (!messageInput.trim() || !peer?.connected) return;
+
+    peer.send(messageInput);
+    this.setState(prev => ({
+      messages: [...prev.messages, { from: 'me', text: messageInput }],
+      messageInput: ''
+    }));
+  };
+
   renderFull = () => {
     if (this.state.full) {
       return 'The room is full';
     }
   };
+
   render() {
     return (
       <div className='video-wrapper'>
@@ -151,6 +181,25 @@ class Video extends React.Component {
           </div>
         )}
         {this.renderFull()}
+         <div className='chat-wrapper'>
+          <div className='messages'>
+            {this.state.messages.map((m, i) =>
+              <div key={i} className={`message ${m.from}`}>{m.text}</div>
+            )}
+          </div>
+
+          <form
+            className='input-row'
+            onSubmit={e => { e.preventDefault(); this.sendMessage(); }}
+          >
+            <input
+              value={this.state.messageInput}
+              onChange={e => this.setState({ messageInput: e.target.value })}
+              placeholder='Type a message…'
+            />
+            <button type='submit' disabled={!this.state.chatReady}>Send</button>
+          </form>
+        </div>
       </div>
     );
   }
