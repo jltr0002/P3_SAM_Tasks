@@ -5,8 +5,6 @@ app.use(express.static(__dirname + '/public'));
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
-
-
 const PORT = 8080;
 
 server.listen(PORT, () => {
